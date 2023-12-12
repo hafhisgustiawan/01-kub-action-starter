@@ -1,0 +1,19 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: backend
+spec:
+  selector:
+    # controll all pods with label second-app
+    app: second-app
+  # load balancer for consistent ip
+  type: LoadBalancer
+  ports:
+    - name: backend-port
+      protocol: "TCP"
+      port: 80 # EKSTERNAL PORT
+      targetPort: 8080 # INTERNAL PORT
+    # - protocol: "TCP"
+    #   port: 443
+    #   targetPort: 443
+# RUN : kubectl apply -f service.yaml

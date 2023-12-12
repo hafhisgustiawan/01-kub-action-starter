@@ -1,0 +1,41 @@
+# lihat dokumentasi apiVersion terbaru
+apiVersion: apps/v1
+# disini kita inisialisasi object yang mau dibuat, bisa job bisa service bisa pod dkk
+kind: Deployment
+# metadata berfungsi untuk membuat identifier seperti nama dkk
+metadata:
+  name: second-app-deployment
+# disini hal menariknya dimulai
+spec:
+  # replicas ini akan menginisialisasi jumlah pods yang berfungsi untuk scaling container jika kita udah tau kalo traffic nya gede
+  replicas: 1
+  # selector disini menjadi penting untuk mengidentifikasi pods mana yang akan di manage oleh deployment yang kita buat, disini kita punya sebuah pods dibawah dengan label app: second-app, bisa aja multiple lable dia ya ges
+  # misal :
+  # matchLabels:
+  #   app: second-app
+  #   tier: backend
+  #   ...: ...
+  # jika pods nya ingin bisa ter-identifikasi, label nya harus sama, mau beberapa label pun harus dimasukkin persis ya
+  selector:
+    matchLabels:
+      app: second-app
+      #   tier: backend
+      #   ...: ...
+  # template ini digunakan untuk inisialisasi image yang akan dimasukkan ke dalam pods
+  template:
+    # kind: Pod # ini gak di ekspect oleh kubernetes karena template memang diperuntukkan untuk pod object
+    metadata:
+      labels:
+        # label app dibawah ini terserah kita, bisa app, bisa kntl dkk
+        app: second-app
+    spec:
+      containers:
+        - name: second-node-app
+          image: hafhisgustiawan/kub-first-app:latest
+          #  imagePullPolicy ini digunakan jika kita ingin ketika file ini di apply, maka kubernetes akan pull ulang image yang ada di registry atau selalu tambahkan tag :latest di nama image
+          imagePullPolicy: Always # || Never
+        # - name : ...
+        #   image: ...
+# RUN : kubectl apply -f deployment.yaml
+# KALO MAU BIKIN PERUBAHAN, TINGGAL UBAH DAN APPLY ULANG, SELESAI BANG!
+# DELETE : kubectl delete -f=deployment.yaml -f=service.yaml

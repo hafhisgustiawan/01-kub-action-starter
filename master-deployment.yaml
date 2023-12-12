@@ -1,0 +1,34 @@
+# KITA BISA MENGGABUNGKAN BEBERAPA RESOURCE DALAM SEBUAH FILE AJA, KITA PISAHKAN DENGAN ---
+kind: Service
+apiVersion: v1
+metadata:
+  name: backend
+spec:
+  selector:
+    # controll all pods with label second-app
+    app: second-app
+  # load balancer for consistent ip
+  type: LoadBalancer
+  ports:
+    - name: backend-port
+      protocol: "TCP"
+      port: 80 # EKSTERNAL PORT
+      targetPort: 8080 # INTERNAL PORT
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: second-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: second-app
+  template:
+    metadata:
+      labels:
+        app: second-app
+    spec:
+      containers:
+        - name: second-node-app
+          image: hafhisgustiawan/kub-first-app:latest
